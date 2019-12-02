@@ -5181,11 +5181,6 @@ var rudderanalytics = (function (exports) {
   var eventRepository = new EventRepository();
 
   function addDomEventHandlers(rudderanalytics) {
-    /* var handler = bind(function(e) {
-        console.log("handler");
-        e = e || window.event;
-        console.log("handler");
-    }, this); */
     var handler = function handler(e) {
       e = e || window.event;
       var target = e.target || e.srcElement;
@@ -5195,9 +5190,9 @@ var rudderanalytics = (function (exports) {
       }
 
       if (shouldTrackDomEvent(target, e)) {
-        console.log("to be tracked ", e.type);
+        logger.debug("to be tracked ", e.type);
       } else {
-        console.log("not to be tracked ", e.type);
+        logger.debug("not to be tracked ", e.type);
       }
 
       trackWindowEvent(e, rudderanalytics);
@@ -5211,7 +5206,7 @@ var rudderanalytics = (function (exports) {
 
   function register_event(element, type, handler, useCapture) {
     if (!element) {
-      console.error('No valid element provided to register_event');
+      logger.error('No valid element provided to register_event');
       return;
     }
 
@@ -5289,7 +5284,6 @@ var rudderanalytics = (function (exports) {
 
     if (shouldTrackDomEvent(target, e)) {
       var targetElementList = [target];
-      console.log(targetElementList);
       var curEl = target;
 
       while (curEl.parentNode && !isTag(curEl, 'body')) {
@@ -5297,7 +5291,6 @@ var rudderanalytics = (function (exports) {
         curEl = curEl.parentNode;
       }
 
-      console.log(targetElementList);
       var elementsJson = [];
       var href,
           explicitNoTrack = false;
@@ -5338,7 +5331,7 @@ var rudderanalytics = (function (exports) {
         'el_attr_href': href,
         'el_text': elementText
       };
-      console.log('web_event', props);
+      logger.debug('web_event', props);
       rudderanalytics.track('autotrack', props);
       return true;
     }
@@ -5348,7 +5341,6 @@ var rudderanalytics = (function (exports) {
     var text = "";
     el.childNodes.forEach(function (value) {
       if (value.nodeType === Node.TEXT_NODE) {
-        console.log("Current textNode value is : ", value.nodeValue.trim());
         text += value.nodeValue;
       }
     });
@@ -5360,9 +5352,7 @@ var rudderanalytics = (function (exports) {
       'classes': getClassName(elem).split(' '),
       'tag_name': elem.tagName.toLowerCase()
     };
-    console.log(elem.attributes);
     var attrLength = elem.attributes.length;
-    console.log(elem.attributes.length, _typeof(elem.attributes));
 
     for (var i = 0; i < attrLength; i++) {
       var name = elem.attributes[i].name;
