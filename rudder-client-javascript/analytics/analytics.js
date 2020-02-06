@@ -19,6 +19,8 @@ import { addDomEventHandlers } from "./utils/autotrack.js";
 
 //https://unpkg.com/test-rudder-sdk@1.0.5/dist/browser.js
 
+const autoTrackHandlersRegistered = false;
+
 /**
  * Add the rudderelement object to flush queue
  *
@@ -82,6 +84,7 @@ class Analytics {
     response = JSON.parse(response);
     if (response.source.useAutoTracking || true) {
       addDomEventHandlers(this);
+      autoTrackHandlersRegistered = true;
     }
     response.source.destinations.forEach(function(destination, index) {
       logger.debug(
@@ -552,7 +555,14 @@ class Analytics {
     if (serverUrl) {
       this.eventRepository.url = serverUrl;
     }
-    getJSONTrimmed(this, CONFIG_URL, writeKey, this.processResponse);
+    try {
+      getJSONTrimmed(this, CONFIG_URL, writeKey, this.processResponse);
+    } catch (error) {
+      handleError(error);
+      if (!autoTrackHandlersRegistered) {
+        addDomEventHandlers(instance);
+      }
+    }
   }
 }
 
